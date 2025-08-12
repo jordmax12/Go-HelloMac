@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"time"
+)
 
 func checkIfPalindrome(s string) bool {
 	left := 0
@@ -32,11 +36,46 @@ func reverseString(s string) string {
 }
 
 func fibonacci(n int) int {
-	fmt.Println(n)
+	// fmt.Println(n)
 	if n <= 1 {
 		return n
 	}
 	return fibonacci(n-1) + fibonacci(n-2)
+}
+
+func retryWithFibonacciBackoff(maxAttempts int, call func() error) error {
+	a := time.Duration(0)
+	b := 50 * time.Millisecond  // base delay
+	maxDelay := 5 * time.Minute // cap
+
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		if err := call(); err == nil {
+			return nil
+		}
+		fmt.Println("attempt", attempt, "with delay", b)
+		time.Sleep(b)
+		// next delay = sum of previous two
+		a, b = b, a+b
+		if b > maxDelay {
+			b = maxDelay
+		}
+	}
+	return errors.New("max attempts reached")
+}
+
+func testRetry() {
+	i := 0
+	maxAttempts := 100
+	err := retryWithFibonacciBackoff(maxAttempts, func() error {
+		i++
+		if i < 20 {
+			fmt.Println("transient failure")
+			return errors.New("try again")
+		}
+		fmt.Println("success on attempt", i)
+		return nil
+	})
+	fmt.Println("result:", err)
 }
 
 func main() {
@@ -54,5 +93,7 @@ func main() {
 	// fmt.Println(reverseString("hello"))
 	// fmt.Println(reverseString("racecar"))
 
-	fmt.Println(fibonacci(5))
+	// fmt.Println(fibonacci(20))
+
+	testRetry()
 }
