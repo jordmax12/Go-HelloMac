@@ -78,6 +78,49 @@ func testRetry() {
 	fmt.Println("result:", err)
 }
 
+func sortedSquares(nums []int) []int {
+	var left = 0
+	var right = len(nums) - 1
+	var pos = len(nums) - 1
+	var newArr = make([]int, len(nums))
+
+	for left <= right {
+		var leftSq = nums[left] * nums[left]
+		var rightSq = nums[right] * nums[right]
+
+		fmt.Printf("leftSq: %d \n rightSq: %d \n pos: %d \n left: %d\n right: %d", leftSq, rightSq, pos, left, right)
+		fmt.Println(newArr)
+
+		if leftSq > rightSq {
+			newArr[pos] = leftSq
+			left++
+		} else {
+			newArr[pos] = rightSq
+			right--
+		}
+
+		pos--
+	}
+
+	return newArr
+}
+
+func findMaxAverage(nums []int, k int) float64 {
+	currSum := 0
+	for i := 0; i < k; i++ {
+		currSum += nums[i]
+	}
+
+	maxSum := currSum
+
+	for i := k; i < len(nums); i++ {
+		currSum = currSum + nums[i] - nums[i-k]
+		maxSum = max(maxSum, currSum)
+	}
+
+	return float64(maxSum) / float64(k)
+}
+
 func main() {
 	fmt.Println("Hello, Mac!")
 
