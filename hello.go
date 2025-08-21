@@ -138,5 +138,11 @@ func main() {
 
 	// fmt.Println(fibonacci(20))
 
-	testRetry()
+	// testRetry()
+
+	// Struct exercises - uncomment to run
+	runExercises()
+
+	// Solutions demo - uncomment to run
+	// runSolutions()
 }
