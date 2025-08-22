@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 )
@@ -159,67 +160,97 @@ func PrintShapeInfo(s Shape) {
 // =============================================================================
 
 // TODO: Define a Library struct that manages books
-// type Book struct {
-// 	Title    string
-// 	Author   string
-// 	ISBN     string
-// 	Year     int
-// 	Available bool
-// }
+type Book struct {
+	Title     string
+	Author    string
+	ISBN      string
+	Year      int
+	Available bool
+}
 
-// type Library struct {
-// 	Name  string
-// 	Books []Book
-// 	// You can also use a map for faster lookups: Books map[string]Book
-// }
+type Library struct {
+	Name  string
+	Books []Book
+	// You can also use a map for faster lookups: Books map[string]Book
+}
 
 // TODO: Create a method to add a book to the library
-// func (l *Library) AddBook(book Book) {
-// 	// Your code here
-// }
+func (l *Library) AddBook(book Book) {
+	l.Books = append(l.Books, book)
+}
 
 // TODO: Create a method to find a book by title
-// func (l Library) FindBookByTitle(title string) (*Book, bool) {
-// 	// Your code here - return pointer to book and whether it was found
-// }
+func (l Library) FindBookByTitle(title string) (*Book, bool) {
+	for _, book := range l.Books {
+		if book.Title == title {
+			return &book, true
+		}
+	}
+	return nil, false
+}
 
 // TODO: Create a method to check out a book (mark as unavailable)
-// func (l *Library) CheckoutBook(title string) bool {
-// 	// Your code here - return true if successful, false if book not found or already checked out
-// }
+func (l *Library) CheckoutBook(title string) bool {
+	for i := range l.Books {
+		if l.Books[i].Title == title && l.Books[i].Available {
+			l.Books[i].Available = false
+			return true
+		}
+	}
+	return false
+}
+
+func (l *Library) ReturnBook(title string) bool {
+	for i := range l.Books {
+		if l.Books[i].Title == title {
+			l.Books[i].Available = true
+			return true
+		}
+	}
+	return false
+}
 
 // =============================================================================
 // EXERCISE 6: Struct with JSON Tags (Bonus)
 // =============================================================================
 
 // TODO: Define a Product struct with JSON tags for API responses
-// type Product struct {
-// 	ID          int     `json:"id"`
-// 	Name        string  `json:"name"`
-// 	Price       float64 `json:"price"`
-// 	Description string  `json:"description"`
-// 	InStock     bool    `json:"in_stock"`
-// }
+type Product2 struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Price       float64 `json:"price"`
+	Description string  `json:"description"`
+	InStock     bool    `json:"in_stock"`
+}
 
 // =============================================================================
 // EXERCISE 7: Custom Types and Methods
 // =============================================================================
 
 // TODO: Define a custom type Temperature based on float64
-// type Temperature float64
+type Temperature float64
 
 // TODO: Create methods to convert between Celsius and Fahrenheit
-// func (t Temperature) ToFahrenheit() Temperature {
-// 	// Your code here - assume t is in Celsius
-// }
+func (t Temperature) ToFahrenheit() Temperature {
+	return Temperature(t*9/5 + 32)
+}
 
-// func (t Temperature) ToCelsius() Temperature {
-// 	// Your code here - assume t is in Fahrenheit
-// }
+func (t Temperature) ToCelsius() Temperature {
+	return Temperature((t - 32) * 5 / 9)
+}
 
-// func (t Temperature) String() string {
-// 	// Your code here - return a formatted string representation
-// }
+func (t Temperature) String() string {
+	fmt.Println("String of Temperature")
+	return fmt.Sprintf("%.2f°", t)
+}
+
+func (t Temperature) AsCelsius() string {
+	return fmt.Sprintf("%.2f°C", t)
+}
+
+func (t Temperature) AsFahrenheit() string {
+	return fmt.Sprintf("%.2f°F", t)
+}
 
 // =============================================================================
 // TEST FUNCTIONS - Uncomment and run these to test your implementations
@@ -287,48 +318,84 @@ func testShapeInterface() {
 }
 
 func testLibrary() {
-	fmt.Println("=== Testing Library ===")
+	fmt.Println("\n\n=== Testing Library ===")
 	// TODO: Uncomment and test your Library implementation
-	// lib := Library{Name: "City Library"}
-	//
-	// book1 := Book{
-	// 	Title:     "The Go Programming Language",
-	// 	Author:    "Alan Donovan",
-	// 	ISBN:      "978-0134190440",
-	// 	Year:      2015,
-	// 	Available: true,
-	// }
-	//
-	// book2 := Book{
-	// 	Title:     "Clean Code",
-	// 	Author:    "Robert Martin",
-	// 	ISBN:      "978-0132350884",
-	// 	Year:      2008,
-	// 	Available: true,
-	// }
-	//
-	// lib.AddBook(book1)
-	// lib.AddBook(book2)
-	//
-	// if book, found := lib.FindBookByTitle("Clean Code"); found {
-	// 	fmt.Printf("Found book: %s by %s\n", book.Title, book.Author)
-	// }
-	//
-	// success := lib.CheckoutBook("Clean Code")
-	// fmt.Printf("Checkout successful: %t\n", success)
-	//
-	// success = lib.CheckoutBook("Clean Code")
-	// fmt.Printf("Second checkout successful: %t\n", success)
+	lib := Library{Name: "City Library"}
+
+	book1 := Book{
+		Title:     "The Go Programming Language",
+		Author:    "Alan Donovan",
+		ISBN:      "978-0134190440",
+		Year:      2015,
+		Available: true,
+	}
+
+	book2 := Book{
+		Title:     "Clean Code",
+		Author:    "Robert Martin",
+		ISBN:      "978-0132350884",
+		Year:      2008,
+		Available: true,
+	}
+
+	lib.AddBook(book1)
+	lib.AddBook(book2)
+
+	if book, found := lib.FindBookByTitle("Clean Code"); found {
+		fmt.Printf("Found book: %s by %s\n", book.Title, book.Author)
+	}
+
+	success := lib.CheckoutBook("Clean Code")
+	fmt.Printf("Checkout successful: %t\n", success)
+
+	success = lib.CheckoutBook("Clean Code")
+	fmt.Printf("Second checkout successful: %t\n", success)
+
+	success = lib.ReturnBook("Clean Code")
+	fmt.Printf("Return successful: %t\n", success)
+
+	success = lib.CheckoutBook("Clean Code")
+	fmt.Printf("Third checkout successful: %t\n", success)
+
+	fmt.Println(lib.Books)
+}
+
+func testProduct() {
+	fmt.Println("\n\n=== Testing Product ===")
+	// TODO: Uncomment and test your Product implementation
+
+	jsonData := `{
+		"id": 1,
+		"name": "Go Programming Language",
+		"price": 29.99,
+		"description": "A book about the Go programming language",
+		"in_stock": true
+	}`
+
+	var product Product2
+	err := json.Unmarshal([]byte(jsonData), &product)
+	if err != nil {
+		fmt.Println("Error unmarshalling JSON:", err)
+	}
+
+	fmt.Println(product)
 }
 
 func testTemperature() {
-	fmt.Println("=== Testing Temperature ===")
-	// TODO: Uncomment and test your Temperature implementation
-	// celsius := Temperature(25.0)
-	// fmt.Printf("25°C = %s\n", celsius.ToFahrenheit())
-	//
-	// fahrenheit := Temperature(77.0)
-	// fmt.Printf("77°F = %s\n", fahrenheit.ToCelsius())
+	fmt.Println("\n\n=== Testing Temperature ===")
+
+	// This will call String() automatically
+	celsius := Temperature(25.0)
+	fmt.Printf("Temperature object: %s\n", celsius) // Calls String()
+	fmt.Println("Temperature object:", celsius)     // Also calls String()
+
+	// Explicit conversions
+	fahrenheit := celsius.ToFahrenheit()
+	fmt.Printf("25°C = %s\n", fahrenheit.AsFahrenheit())
+
+	fahrenheitTemp := Temperature(77.0)
+	celsiusConverted := fahrenheitTemp.ToCelsius()
+	fmt.Printf("77°F = %s\n", celsiusConverted.AsCelsius())
 }
 
 // =============================================================================
@@ -359,8 +426,9 @@ func runExercises() {
 	testBankAccount()
 	testEmployeeStruct()
 	testShapeInterface()
-	// testLibrary()
-	// testTemperature()
+	testLibrary()
+	testProduct()
+	testTemperature()
 
 	fmt.Println("\n\nComplete the exercises above and uncomment the test functions!")
 }
