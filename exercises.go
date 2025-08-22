@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
 // =============================================================================
@@ -68,71 +69,90 @@ func (ba BankAccount) GetBalance() float64 {
 // =============================================================================
 
 // TODO: Define an Address struct
-// type Address struct {
-// 	Street   string
-// 	City     string
-// 	State    string
-// 	ZipCode  string
-// }
+type Address struct {
+	Street  string
+	City    string
+	State   string
+	ZipCode string
+}
 
 // TODO: Define an Employee struct that embeds Person and has additional fields
-// type Employee struct {
-// 	Person          // Embedded struct
-// 	EmployeeID      string
-// 	Department      string
-// 	Salary          float64
-// 	WorkAddress     Address
-// }
+type Employee struct {
+	Person      // ✅ Embedded - no field name!
+	EmployeeID  string
+	Department  string
+	Salary      float64
+	WorkAddress Address
+}
 
 // TODO: Create a method for Employee that returns their full info
-// func (e Employee) GetEmployeeInfo() string {
-// 	// Your code here - return a formatted string with all employee details
-// }
+func (e Employee) GetEmployeeInfo() string {
+	return fmt.Sprintf("Employee Name: %s, Employee Age: %d, Employee Email: %s, Employee ID: %s, Department: %s, Salary: %.2f, Address: %s, %s, %s, %s",
+		e.Name,
+		e.Age,
+		e.Email,
+		e.EmployeeID,
+		e.Department,
+		e.Salary,
+		e.WorkAddress.Street,
+		e.WorkAddress.City,
+		e.WorkAddress.State,
+		e.WorkAddress.ZipCode,
+	)
+}
 
 // =============================================================================
 // EXERCISE 4: Interfaces
 // =============================================================================
 
 // TODO: Define a Shape interface with methods Area() and Perimeter()
-// type Shape interface {
-// 	// Your code here
-// }
+type Shape interface {
+	Area() float64
+	Perimeter() float64
+}
 
 // TODO: Define a Rectangle struct and implement the Shape interface
-// type Rectangle struct {
-// 	Width  float64
-// 	Height float64
-// }
+type Rectangle struct {
+	Width  float64
+	Height float64
+}
 
 // TODO: Implement Area method for Rectangle
-// func (r Rectangle) Area() float64 {
-// 	// Your code here
-// }
+func (r Rectangle) Area() float64 {
+	fmt.Println("Area of Rectangle")
+	return r.Width * r.Height
+}
 
 // TODO: Implement Perimeter method for Rectangle
-// func (r Rectangle) Perimeter() float64 {
-// 	// Your code here
-// }
+func (r Rectangle) Perimeter() float64 {
+	fmt.Println("Perimeter of Rectangle")
+	return 2 * (r.Width + r.Height)
+}
+
+func (r Rectangle) Test() float64 {
+	fmt.Println("Test of Rectangle")
+	return 2 * (r.Width + r.Height)
+}
 
 // TODO: Define a Circle struct and implement the Shape interface
-// type Circle struct {
-// 	Radius float64
-// }
+type Circle struct {
+	Radius float64
+}
 
 // TODO: Implement Area method for Circle
-// func (c Circle) Area() float64 {
-// 	// Your code here
-// }
+func (c Circle) Area() float64 {
+	return math.Pi * c.Radius * c.Radius
+}
 
 // TODO: Implement Perimeter method for Circle
-// func (c Circle) Perimeter() float64 {
-// 	// Your code here
-// }
+func (c Circle) Perimeter() float64 {
+	return 2 * math.Pi * c.Radius
+}
 
 // TODO: Create a function that takes a Shape interface and prints its area and perimeter
-// func PrintShapeInfo(s Shape) {
-// 	// Your code here
-// }
+func PrintShapeInfo(s Shape) {
+	fmt.Printf("Area: %.2f, Perimeter: %.2f\n", s.Area(), s.Perimeter())
+}
 
 // =============================================================================
 // EXERCISE 5: Advanced Structs with Slices and Maps
@@ -213,7 +233,7 @@ func testPersonStruct() {
 }
 
 func testBankAccount() {
-	fmt.Println("=== Testing Bank Account ===")
+	fmt.Println("\n\n=== Testing Bank Account ===")
 
 	account := BankAccount{
 		AccountNumber: "12345",
@@ -233,37 +253,37 @@ func testBankAccount() {
 }
 
 func testEmployeeStruct() {
-	fmt.Println("=== Testing Employee Struct ===")
+	fmt.Println("\n\n=== Testing Employee Struct ===")
 	// TODO: Uncomment and test your Employee implementation
-	// emp := Employee{
-	// 	Person: Person{
-	// 		Name:  "Jane Smith",
-	// 		Age:   28,
-	// 		Email: "jane@company.com",
-	// 	},
-	// 	EmployeeID: "EMP001",
-	// 	Department: "Engineering",
-	// 	Salary:     75000.0,
-	// 	WorkAddress: Address{
-	// 		Street:  "123 Tech St",
-	// 		City:    "San Francisco",
-	// 		State:   "CA",
-	// 		ZipCode: "94105",
-	// 	},
-	// }
+	emp := Employee{
+		Person: Person{
+			Name:  "Jane Smith",
+			Age:   28,
+			Email: "jane@company.com",
+		},
+		EmployeeID: "EMP001",
+		Department: "Engineering",
+		Salary:     75000.0,
+		WorkAddress: Address{
+			Street:  "123 Tech St",
+			City:    "San Francisco",
+			State:   "CA",
+			ZipCode: "94105",
+		},
+	}
 	//
-	// fmt.Println(emp.GetEmployeeInfo())
-	// fmt.Println(emp.Greet()) // This should work due to embedding!
+	fmt.Println(emp.GetEmployeeInfo())
+	fmt.Println(emp.Greet()) // This should work due to embedding!
 }
 
 func testShapeInterface() {
-	fmt.Println("=== Testing Shape Interface ===")
+	fmt.Println("\n\n=== Testing Shape Interface ===")
 	// TODO: Uncomment and test your Shape implementations
-	// rect := Rectangle{Width: 10, Height: 5}
-	// circle := Circle{Radius: 7}
-	//
-	// PrintShapeInfo(rect)
-	// PrintShapeInfo(circle)
+	rect := Rectangle{Width: 10, Height: 5}
+	circle := Circle{Radius: 7}
+
+	PrintShapeInfo(rect)
+	PrintShapeInfo(circle)
 }
 
 func testLibrary() {
@@ -335,12 +355,12 @@ func runExercises() {
 	fmt.Println()
 
 	// Uncomment these as you complete each exercise
-	// testPersonStruct()
+	testPersonStruct()
 	testBankAccount()
-	// testEmployeeStruct()
-	// testShapeInterface()
+	testEmployeeStruct()
+	testShapeInterface()
 	// testLibrary()
 	// testTemperature()
 
-	fmt.Println("Complete the exercises above and uncomment the test functions!")
+	fmt.Println("\n\nComplete the exercises above and uncomment the test functions!")
 }
